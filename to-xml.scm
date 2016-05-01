@@ -25,21 +25,24 @@
 (define (make-xml data) 
   (define (inner data nest-level)
     (let ((indent-width 4))
-      (if (not (tag? data))
-        (begin (for-each display (list (make-indent nest-level indent-width) data)) (newline))
-        (begin 
-          (display (make-indent nest-level indent-width))
-          (display "<")
-          (display (get-tag data))
-          (for-each display (cons " " (interspace #\space (map format-atribute (get-atributes data)))))
-          (display ">")
-          (newline)
-          (if (not (null? (get-body data)))
-            (map (lambda (x) (inner x (+ nest-level 1))) (get-body data)))
-          (for-each display 
-                    (list 
-                      (make-indent nest-level indent-width)
-                      "</"
-                      (get-tag data)
-                      ">\n"))))))
+          (if (not (tag? data))
+            (begin (for-each display (list (make-indent nest-level indent-width) data)) (newline))
+            (let 
+              ((has-body (not (null? (get-body data)))))
+              (display (make-indent nest-level indent-width))
+              (display "<")
+              (display (get-tag data))
+              (for-each display (cons " " (interspace #\space (map format-atribute (get-atributes data)))))
+              (if (not has-body) (display "/"))
+              (display ">")
+              (newline)
+              (if has-body
+                (begin
+                  (map (lambda (x) (inner x (+ nest-level 1))) (get-body data))
+                  (for-each display 
+                            (list 
+                              (make-indent nest-level indent-width)
+                              "</"
+                              (get-tag data)
+                              ">\n"))))))))
   (inner data 0))
