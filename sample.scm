@@ -1,7 +1,9 @@
 (define xml '(html ()
    (head ()
-     (meta ((charset UTF-8) (langugage sv))))
+     (meta ((charset "UTF-8") (langugage sv))))
    (body ()
+     (div ((class center red-background))
+       (p () Hello World))
      (div ((class all))
        (p ((id test))
          This is some
